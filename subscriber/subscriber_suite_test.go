@@ -21,12 +21,12 @@ func TestPubsub(t *testing.T) {
 var _ = Describe("Subscription service", func() {
 	var (
 		ctrl    *gomock.Controller
-		mclient *mock_subscriber.MockClient
+		mclient *mock_subscriber.MockPubSubClient
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
-		mclient = mock_subscriber.NewMockClient(ctrl)
+		mclient = mock_subscriber.NewMockPubSubClient(ctrl)
 	})
 
 	AfterEach(func() {

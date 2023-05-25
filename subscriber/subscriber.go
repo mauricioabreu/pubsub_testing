@@ -2,47 +2,22 @@ package subscriber
 
 import (
 	"context"
-	"time"
 
 	"cloud.google.com/go/pubsub"
 )
 
-type Client interface {
-	CreateTopic(ctx context.Context, topicID string) (Topic, error)
-	Topic(id string) Topic
-	CreateSubscription(ctx context.Context, id string, cfg pubsub.SubscriptionConfig) (Subscription, error)
-	Subscription(id string) Subscription
-}
-
-type Topic interface {
-	String() string
-}
-
-type Subscription interface {
-	Exists(ctx context.Context) (bool, error)
-	Receive(ctx context.Context, f func(context.Context, Message)) error
-	Delete(ctx context.Context) error
-}
-
-type Message interface {
-	ID() string
-	Data() []byte
-	Attributes() map[string]string
-	PublishTime() time.Time
-	Ack()
-	Nack()
+type PubSubClient interface {
+	CreateTopic(ctx context.Context, topic string) (*pubsub.Topic, error)
+	Subscription(name string) *pubsub.Subscription
+	CreateSubscription(ctx context.Context, name string, config pubsub.SubscriptionConfig) (*pubsub.Subscription, error)
 }
 
 type PubSub struct {
-	client Client
+	client PubSubClient
 }
 
-func New(client Client) *PubSub {
+func New(client PubSubClient) *PubSub {
 	return &PubSub{client: client}
-}
-
-type Subscriber struct {
-	subscription Subscription
 }
 
 type Options struct {
@@ -51,24 +26,24 @@ type Options struct {
 	SubscriptionName string
 }
 
-func (ps *PubSub) Subscribe(ctx context.Context, opts Options) (*Subscriber, error) {
+func (ps *PubSub) Subscribe(ctx context.Context, opts Options) (*pubsub.Subscription, error) {
 	topic, err := ps.client.CreateTopic(ctx, opts.TopicName)
 	if err != nil {
-		return &Subscriber{}, err
+		return &pubsub.Subscription{}, err
 	}
 
 	sub := ps.client.Subscription(opts.SubscriptionName)
 	exists, err := sub.Exists(ctx)
 	if err != nil {
-		return &Subscriber{}, err
+		return &pubsub.Subscription{}, err
 	}
 
 	if !exists {
-		sub, err = ps.client.CreateSubscription(ctx, opts.SubscriptionName, pubsub.SubscriptionConfig{Topic: topic.(*pubsub.Topic)})
+		sub, err = ps.client.CreateSubscription(ctx, opts.SubscriptionName, pubsub.SubscriptionConfig{Topic: topic})
 		if err != nil {
-			return &Subscriber{}, err
+			return &pubsub.Subscription{}, err
 		}
 	}
 
-	return &Subscriber{subscription: sub}, nil
+	return sub, nil
 }

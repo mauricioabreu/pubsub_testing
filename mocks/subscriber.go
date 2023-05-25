@@ -7,296 +7,74 @@ package mock_subscriber
 import (
 	context "context"
 	reflect "reflect"
-	time "time"
 
 	pubsub "cloud.google.com/go/pubsub"
 	gomock "github.com/golang/mock/gomock"
-	subscriber "github.com/mauricioabreu/pubsub_testing/subscriber"
 )
 
-// MockClient is a mock of Client interface.
-type MockClient struct {
+// MockPubSubClient is a mock of PubSubClient interface.
+type MockPubSubClient struct {
 	ctrl     *gomock.Controller
-	recorder *MockClientMockRecorder
+	recorder *MockPubSubClientMockRecorder
 }
 
-// MockClientMockRecorder is the mock recorder for MockClient.
-type MockClientMockRecorder struct {
-	mock *MockClient
+// MockPubSubClientMockRecorder is the mock recorder for MockPubSubClient.
+type MockPubSubClientMockRecorder struct {
+	mock *MockPubSubClient
 }
 
-// NewMockClient creates a new mock instance.
-func NewMockClient(ctrl *gomock.Controller) *MockClient {
-	mock := &MockClient{ctrl: ctrl}
-	mock.recorder = &MockClientMockRecorder{mock}
+// NewMockPubSubClient creates a new mock instance.
+func NewMockPubSubClient(ctrl *gomock.Controller) *MockPubSubClient {
+	mock := &MockPubSubClient{ctrl: ctrl}
+	mock.recorder = &MockPubSubClientMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockClient) EXPECT() *MockClientMockRecorder {
+func (m *MockPubSubClient) EXPECT() *MockPubSubClientMockRecorder {
 	return m.recorder
 }
 
 // CreateSubscription mocks base method.
-func (m *MockClient) CreateSubscription(ctx context.Context, id string, cfg pubsub.SubscriptionConfig) (subscriber.Subscription, error) {
+func (m *MockPubSubClient) CreateSubscription(ctx context.Context, name string, config pubsub.SubscriptionConfig) (*pubsub.Subscription, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateSubscription", ctx, id, cfg)
-	ret0, _ := ret[0].(subscriber.Subscription)
+	ret := m.ctrl.Call(m, "CreateSubscription", ctx, name, config)
+	ret0, _ := ret[0].(*pubsub.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateSubscription indicates an expected call of CreateSubscription.
-func (mr *MockClientMockRecorder) CreateSubscription(ctx, id, cfg interface{}) *gomock.Call {
+func (mr *MockPubSubClientMockRecorder) CreateSubscription(ctx, name, config interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubscription", reflect.TypeOf((*MockClient)(nil).CreateSubscription), ctx, id, cfg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubscription", reflect.TypeOf((*MockPubSubClient)(nil).CreateSubscription), ctx, name, config)
 }
 
 // CreateTopic mocks base method.
-func (m *MockClient) CreateTopic(ctx context.Context, topicID string) (subscriber.Topic, error) {
+func (m *MockPubSubClient) CreateTopic(ctx context.Context, topic string) (*pubsub.Topic, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTopic", ctx, topicID)
-	ret0, _ := ret[0].(subscriber.Topic)
+	ret := m.ctrl.Call(m, "CreateTopic", ctx, topic)
+	ret0, _ := ret[0].(*pubsub.Topic)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateTopic indicates an expected call of CreateTopic.
-func (mr *MockClientMockRecorder) CreateTopic(ctx, topicID interface{}) *gomock.Call {
+func (mr *MockPubSubClientMockRecorder) CreateTopic(ctx, topic interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTopic", reflect.TypeOf((*MockClient)(nil).CreateTopic), ctx, topicID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTopic", reflect.TypeOf((*MockPubSubClient)(nil).CreateTopic), ctx, topic)
 }
 
 // Subscription mocks base method.
-func (m *MockClient) Subscription(id string) subscriber.Subscription {
+func (m *MockPubSubClient) Subscription(name string) *pubsub.Subscription {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Subscription", id)
-	ret0, _ := ret[0].(subscriber.Subscription)
+	ret := m.ctrl.Call(m, "Subscription", name)
+	ret0, _ := ret[0].(*pubsub.Subscription)
 	return ret0
 }
 
 // Subscription indicates an expected call of Subscription.
-func (mr *MockClientMockRecorder) Subscription(id interface{}) *gomock.Call {
+func (mr *MockPubSubClientMockRecorder) Subscription(name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscription", reflect.TypeOf((*MockClient)(nil).Subscription), id)
-}
-
-// Topic mocks base method.
-func (m *MockClient) Topic(id string) subscriber.Topic {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Topic", id)
-	ret0, _ := ret[0].(subscriber.Topic)
-	return ret0
-}
-
-// Topic indicates an expected call of Topic.
-func (mr *MockClientMockRecorder) Topic(id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Topic", reflect.TypeOf((*MockClient)(nil).Topic), id)
-}
-
-// MockTopic is a mock of Topic interface.
-type MockTopic struct {
-	ctrl     *gomock.Controller
-	recorder *MockTopicMockRecorder
-}
-
-// MockTopicMockRecorder is the mock recorder for MockTopic.
-type MockTopicMockRecorder struct {
-	mock *MockTopic
-}
-
-// NewMockTopic creates a new mock instance.
-func NewMockTopic(ctrl *gomock.Controller) *MockTopic {
-	mock := &MockTopic{ctrl: ctrl}
-	mock.recorder = &MockTopicMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTopic) EXPECT() *MockTopicMockRecorder {
-	return m.recorder
-}
-
-// String mocks base method.
-func (m *MockTopic) String() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "String")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// String indicates an expected call of String.
-func (mr *MockTopicMockRecorder) String() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "String", reflect.TypeOf((*MockTopic)(nil).String))
-}
-
-// MockSubscription is a mock of Subscription interface.
-type MockSubscription struct {
-	ctrl     *gomock.Controller
-	recorder *MockSubscriptionMockRecorder
-}
-
-// MockSubscriptionMockRecorder is the mock recorder for MockSubscription.
-type MockSubscriptionMockRecorder struct {
-	mock *MockSubscription
-}
-
-// NewMockSubscription creates a new mock instance.
-func NewMockSubscription(ctrl *gomock.Controller) *MockSubscription {
-	mock := &MockSubscription{ctrl: ctrl}
-	mock.recorder = &MockSubscriptionMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockSubscription) EXPECT() *MockSubscriptionMockRecorder {
-	return m.recorder
-}
-
-// Delete mocks base method.
-func (m *MockSubscription) Delete(ctx context.Context) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", ctx)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Delete indicates an expected call of Delete.
-func (mr *MockSubscriptionMockRecorder) Delete(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockSubscription)(nil).Delete), ctx)
-}
-
-// Exists mocks base method.
-func (m *MockSubscription) Exists(ctx context.Context) (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Exists", ctx)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Exists indicates an expected call of Exists.
-func (mr *MockSubscriptionMockRecorder) Exists(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockSubscription)(nil).Exists), ctx)
-}
-
-// Receive mocks base method.
-func (m *MockSubscription) Receive(ctx context.Context, f func(context.Context, subscriber.Message)) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Receive", ctx, f)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Receive indicates an expected call of Receive.
-func (mr *MockSubscriptionMockRecorder) Receive(ctx, f interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Receive", reflect.TypeOf((*MockSubscription)(nil).Receive), ctx, f)
-}
-
-// MockMessage is a mock of Message interface.
-type MockMessage struct {
-	ctrl     *gomock.Controller
-	recorder *MockMessageMockRecorder
-}
-
-// MockMessageMockRecorder is the mock recorder for MockMessage.
-type MockMessageMockRecorder struct {
-	mock *MockMessage
-}
-
-// NewMockMessage creates a new mock instance.
-func NewMockMessage(ctrl *gomock.Controller) *MockMessage {
-	mock := &MockMessage{ctrl: ctrl}
-	mock.recorder = &MockMessageMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockMessage) EXPECT() *MockMessageMockRecorder {
-	return m.recorder
-}
-
-// Ack mocks base method.
-func (m *MockMessage) Ack() {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Ack")
-}
-
-// Ack indicates an expected call of Ack.
-func (mr *MockMessageMockRecorder) Ack() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Ack", reflect.TypeOf((*MockMessage)(nil).Ack))
-}
-
-// Attributes mocks base method.
-func (m *MockMessage) Attributes() map[string]string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Attributes")
-	ret0, _ := ret[0].(map[string]string)
-	return ret0
-}
-
-// Attributes indicates an expected call of Attributes.
-func (mr *MockMessageMockRecorder) Attributes() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Attributes", reflect.TypeOf((*MockMessage)(nil).Attributes))
-}
-
-// Data mocks base method.
-func (m *MockMessage) Data() []byte {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Data")
-	ret0, _ := ret[0].([]byte)
-	return ret0
-}
-
-// Data indicates an expected call of Data.
-func (mr *MockMessageMockRecorder) Data() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Data", reflect.TypeOf((*MockMessage)(nil).Data))
-}
-
-// ID mocks base method.
-func (m *MockMessage) ID() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ID")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// ID indicates an expected call of ID.
-func (mr *MockMessageMockRecorder) ID() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ID", reflect.TypeOf((*MockMessage)(nil).ID))
-}
-
-// Nack mocks base method.
-func (m *MockMessage) Nack() {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Nack")
-}
-
-// Nack indicates an expected call of Nack.
-func (mr *MockMessageMockRecorder) Nack() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Nack", reflect.TypeOf((*MockMessage)(nil).Nack))
-}
-
-// PublishTime mocks base method.
-func (m *MockMessage) PublishTime() time.Time {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PublishTime")
-	ret0, _ := ret[0].(time.Time)
-	return ret0
-}
-
-// PublishTime indicates an expected call of PublishTime.
-func (mr *MockMessageMockRecorder) PublishTime() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublishTime", reflect.TypeOf((*MockMessage)(nil).PublishTime))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscription", reflect.TypeOf((*MockPubSubClient)(nil).Subscription), name)
 }
