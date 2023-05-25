@@ -1,16 +1,16 @@
-package pubsub
+package subscriber
 
 import (
 	"context"
 	"time"
 
-	gpubsub "cloud.google.com/go/pubsub"
+	"cloud.google.com/go/pubsub"
 )
 
 type Client interface {
 	CreateTopic(ctx context.Context, topicID string) (Topic, error)
 	Topic(id string) Topic
-	CreateSubscription(ctx context.Context, id string, cfg SubscriptionConfig) (Subscription, error)
+	CreateSubscription(ctx context.Context, id string, cfg pubsub.SubscriptionConfig) (Subscription, error)
 	Subscription(id string) Subscription
 }
 
@@ -22,11 +22,6 @@ type Subscription interface {
 	Exists(ctx context.Context) (bool, error)
 	Receive(ctx context.Context, f func(context.Context, Message)) error
 	Delete(ctx context.Context) error
-}
-
-type SubscriptionConfig struct {
-	gpubsub.SubscriptionConfig
-	Topic Topic
 }
 
 type Message interface {
@@ -69,7 +64,7 @@ func (ps *PubSub) Subscribe(ctx context.Context, opts Options) (*Subscriber, err
 	}
 
 	if !exists {
-		sub, err = ps.client.CreateSubscription(ctx, opts.SubscriptionName, SubscriptionConfig{Topic: topic})
+		sub, err = ps.client.CreateSubscription(ctx, opts.SubscriptionName, pubsub.SubscriptionConfig{Topic: topic.(*pubsub.Topic)})
 		if err != nil {
 			return &Subscriber{}, err
 		}
