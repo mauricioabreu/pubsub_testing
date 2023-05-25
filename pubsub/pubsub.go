@@ -42,6 +42,10 @@ type PubSub struct {
 	client Client
 }
 
+func New(client Client) *PubSub {
+	return &PubSub{client: client}
+}
+
 type Subscriber struct {
 	subscription Subscription
 }
