@@ -10,6 +10,7 @@ import (
 
 	pubsub "cloud.google.com/go/pubsub"
 	gomock "github.com/golang/mock/gomock"
+	subscriber "github.com/mauricioabreu/pubsub_testing/subscriber"
 )
 
 // MockPubSubClient is a mock of PubSubClient interface.
@@ -36,10 +37,10 @@ func (m *MockPubSubClient) EXPECT() *MockPubSubClientMockRecorder {
 }
 
 // CreateSubscription mocks base method.
-func (m *MockPubSubClient) CreateSubscription(ctx context.Context, name string, config pubsub.SubscriptionConfig) (*pubsub.Subscription, error) {
+func (m *MockPubSubClient) CreateSubscription(ctx context.Context, name string, config pubsub.SubscriptionConfig) (subscriber.Subscription, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSubscription", ctx, name, config)
-	ret0, _ := ret[0].(*pubsub.Subscription)
+	ret0, _ := ret[0].(subscriber.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -66,10 +67,10 @@ func (mr *MockPubSubClientMockRecorder) CreateTopic(ctx, topic interface{}) *gom
 }
 
 // Subscription mocks base method.
-func (m *MockPubSubClient) Subscription(name string) *pubsub.Subscription {
+func (m *MockPubSubClient) Subscription(name string) subscriber.Subscription {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Subscription", name)
-	ret0, _ := ret[0].(*pubsub.Subscription)
+	ret0, _ := ret[0].(subscriber.Subscription)
 	return ret0
 }
 
@@ -77,4 +78,42 @@ func (m *MockPubSubClient) Subscription(name string) *pubsub.Subscription {
 func (mr *MockPubSubClientMockRecorder) Subscription(name interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscription", reflect.TypeOf((*MockPubSubClient)(nil).Subscription), name)
+}
+
+// MockSubscription is a mock of Subscription interface.
+type MockSubscription struct {
+	ctrl     *gomock.Controller
+	recorder *MockSubscriptionMockRecorder
+}
+
+// MockSubscriptionMockRecorder is the mock recorder for MockSubscription.
+type MockSubscriptionMockRecorder struct {
+	mock *MockSubscription
+}
+
+// NewMockSubscription creates a new mock instance.
+func NewMockSubscription(ctrl *gomock.Controller) *MockSubscription {
+	mock := &MockSubscription{ctrl: ctrl}
+	mock.recorder = &MockSubscriptionMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockSubscription) EXPECT() *MockSubscriptionMockRecorder {
+	return m.recorder
+}
+
+// Exists mocks base method.
+func (m *MockSubscription) Exists(ctx context.Context) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Exists", ctx)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Exists indicates an expected call of Exists.
+func (mr *MockSubscriptionMockRecorder) Exists(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockSubscription)(nil).Exists), ctx)
 }

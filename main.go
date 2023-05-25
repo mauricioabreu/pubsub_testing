@@ -15,8 +15,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sub := subscriber.New(client)
-	_, err = sub.Subscribe(ctx, subscriber.Options{TopicName: "project-id"})
+	adapter := &subscriber.PubSubClientAdapter{Client: client}
+	sub := subscriber.New(adapter)
+	_, err = sub.Subscribe(ctx, subscriber.Options{TopicName: "topic-id"})
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -20,25 +20,36 @@ func TestPubsub(t *testing.T) {
 
 var _ = Describe("Subscription service", func() {
 	var (
-		ctrl    *gomock.Controller
-		mclient *mock_subscriber.MockPubSubClient
+		ctrl          *gomock.Controller
+		mclient       *mock_subscriber.MockPubSubClient
+		msubscription *mock_subscriber.MockSubscription
 	)
 
 	BeforeEach(func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mclient = mock_subscriber.NewMockPubSubClient(ctrl)
+		msubscription = mock_subscriber.NewMockSubscription(ctrl)
 	})
 
 	AfterEach(func() {
 		ctrl.Finish()
 	})
 
-	Describe("Creating topic", func() {
-		It("Creates a topic", func() {
+	Describe("Subscribing to a topic", func() {
+		It("Fails creating a topic", func() {
 			ctx := context.TODO()
-			mclient.EXPECT().CreateTopic(ctx, "project-id").Return(&pubsub.Topic{}, errors.New("failed to create topic"))
+			mclient.EXPECT().CreateTopic(ctx, "topic-id").Return(&pubsub.Topic{}, errors.New("failed to create topic"))
 			psub := subscriber.New(mclient)
-			_, err := psub.Subscribe(ctx, subscriber.Options{TopicName: "project-id"})
+			_, err := psub.Subscribe(ctx, subscriber.Options{TopicName: "topic-id"})
+			Expect(err).To(HaveOccurred())
+		})
+		It("Creates a topic but fetching subscription fails", func() {
+			ctx := context.TODO()
+			mclient.EXPECT().CreateTopic(ctx, "topic-id").Return(&pubsub.Topic{}, nil)
+			msubscription.EXPECT().Exists(ctx).Return(false, errors.New("failed to fetch subscription"))
+			mclient.EXPECT().Subscription("subscription-id").Return(msubscription)
+			psub := subscriber.New(mclient)
+			_, err := psub.Subscribe(ctx, subscriber.Options{TopicName: "topic-id", SubscriptionName: "subscription-id"})
 			Expect(err).To(HaveOccurred())
 		})
 	})
