@@ -32,8 +32,7 @@ func (a *PubSubClientAdapter) Subscription(name string) Subscription {
 }
 
 func (a *PubSubClientAdapter) CreateSubscription(ctx context.Context, name string, config pubsub.SubscriptionConfig) (Subscription, error) {
-	sub, err := a.Client.CreateSubscription(ctx, name, config)
-	return sub, err
+	return a.Client.CreateSubscription(ctx, name, config)
 }
 
 type PubSub struct {
